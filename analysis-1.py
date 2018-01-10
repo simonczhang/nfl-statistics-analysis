@@ -14,8 +14,23 @@ for i in range(5):
 
 print('\n')
 print('Game Preview')
-for i in range(5):
-    pprint(game_data[i])
+pprint(game_data[1000000])
+
+#%% #Create dictionary to count up all 0 in all fields of game stats
+
+zero_dict = {}
+
+for stat in game_data[0]:
+    zero_dict[stat] = 0
+    
+for game in game_data:
+    for stat in game:
+        count = zero_dict[stat]
+        if game[stat] == 0:
+            count += 1
+            zero_dict[stat] = count
+
+pprint(zero_dict)
 
 #%% convert string data to numerical data 
 
@@ -42,7 +57,7 @@ for player in profile_data:
             value = value.replace(',' , '')
             value = int(value)
             player[column] = value
-
+'''
 #convert games strings to int
 for game in game_data:
     for stat in game:
@@ -52,5 +67,5 @@ for game in game_data:
             value = int(value)
             game[stat] = value
 
-        
+        '''
     
