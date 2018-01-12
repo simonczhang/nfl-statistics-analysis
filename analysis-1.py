@@ -3,8 +3,12 @@ import json
 from pprint import pprint
 
 #%% load data to python dicts
-profile_data = json.load(open('profile-data.json'))
-game_data = json.load(open('games-data.json'))
+profile_original = json.load(open('profile-data.json'))
+game_original = json.load(open('games-data.json'))
+
+#%% keep original and analysis data separate
+profile_data = profile_original
+game_data = game_original
 
 #%% quick look at data
 print('\n')
@@ -14,8 +18,8 @@ for i in range(5):
 
 print('\n')
 print('Game Preview')
-pprint(game_data[1000000])
-
+for i in range(5):
+    pprint(game_data[i])
 #%% #Create dictionary to count up all 0 in all fields of game stats
 
 zero_dict = {}
@@ -23,6 +27,9 @@ zero_dict = {}
 for stat in game_data[0]:
     zero_dict[stat] = 0
     
+pprint(zero_dict)
+
+
 for game in game_data:
     for stat in game:
         count = zero_dict[stat]
@@ -32,40 +39,39 @@ for game in game_data:
 
 pprint(zero_dict)
 
-#%% convert string data to numerical data 
+#%% why is there so many 0 for game_won field?
 
-### not converting dates or height for profile yet
+a = set()
+
+for game in game_data:
+    value = game['game_won']
+    a.add(value)
+    
+print(a)
+
+#%% create function to convert string to int values
+
+def string_to_int(data, fields):
+    for i in data:
+        for j in fields:
+            value = i[j]
+            if value != None and value != 0:
+                value = value.replace(',', '')
+                value = int(value)
+                i[j] = value
+
 profile_convert_columns = ['current_salary', 
                    'draft_position', 
                    'draft_round', 
                    'draft_year', 
                    'weight']
 
-### NOT converting below list ever/yet
-game_not_convert_columns = ['age',
-                            'date',
-                            'game_location',
-                            'game_won',
-                            'opponent',
-                            'team']
+game_convert_columns = ['game_number',
+                        'opponent_score',
+                        'year',
+                        'player_team_score']
 
-#convert profile strings to int
-for player in profile_data:
-    for column in profile_convert_columns:
-        value = player[column]
-        if value != None:
-            value = value.replace(',' , '')
-            value = int(value)
-            player[column] = value
-'''
-#convert games strings to int
-for game in game_data:
-    for stat in game:
-        if stat not in game_not_convert_columns:
-            value = game[stat]
-            value = value.replace(',' , '')
-            value = int(value)
-            game[stat] = value
+#convert profiles and game data
+string_to_int(profile_data, profile_convert_columns)
+string_to_int(game_data, game_convert_columns)
 
-        '''
-    
